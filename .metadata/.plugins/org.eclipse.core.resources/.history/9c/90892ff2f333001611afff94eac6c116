@@ -1,0 +1,76 @@
+package economy;
+
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+public class MoneyShop {
+
+	public void readSign(Player p, Sign sign) {
+		String[] lines = sign.getLines();
+		if (lines[0].equalsIgnoreCase("Kaufen")) {
+			kaufe(p, sign);
+		} else if (lines[0].equalsIgnoreCase("Verkaufen")) {
+			verkaufe(p, sign);
+		}
+	}
+	
+	private void kaufe(Player p, Sign sign) {
+		String[] lines = sign.getLines();
+		if (lines[0].equalsIgnoreCase("Kaufen")) {
+			int anzahl = 1;
+			if (p.isSneaking()) {
+				anzahl = 64;
+			}
+			Material mat;
+			String product = lines[1];
+			switch (product) {
+			case "Bedrock": mat = Material.BEDROCK;
+				break;
+			}
+		}
+	}
+	
+	
+	private void verkaufe(Player p, Sign sign) {
+		String[] lines = sign.getLines();
+		int anzahl = 1;
+		if (p.isSneaking()) {
+			anzahl = 64;
+		}
+		Material mat = null;
+		short durability = 0;
+		String product = lines[1];
+		switch (product) {
+		case "Pflasterstein": mat = Material.COBBLESTONE; anzahl = 64;
+			break;
+		case "Netherstein": mat = Material.NETHERRACK; anzahl = 64;
+			break;
+		case "Weiße Wolle": mat = Material.WOOL; anzahl = 64;
+			break;
+		case "Lapislazuli": mat = Material.INK_SACK; anzahl = 64; durability = 4;
+			break;
+		case "Eisenbarren": mat = Material.IRON_INGOT;
+			break;
+		case "Goldbarren": mat = Material.GOLD_INGOT;
+			break;
+		case "Diamant": mat = Material.DIAMOND;
+			break;
+		case "Smaragd": mat = Material.EMERALD;
+			break;
+		case "Kohle": mat = Material.COAL; anzahl = 16;
+			break;
+		case "Redstone": mat = Material.REDSTONE;
+			break;
+		case "Melone": mat = Material.MELON_BLOCK;
+			break;
+		case "Kürbis": mat = Material.PUMPKIN;
+			break;
+		default: 
+			break;
+		}
+		
+		ItemStack item = new ItemStack(mat,anzahl,durability);
+	}
+}

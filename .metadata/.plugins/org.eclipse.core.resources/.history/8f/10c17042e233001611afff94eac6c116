@@ -1,0 +1,77 @@
+package economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class CommandPay implements CommandExecutor {
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	
+		if (sender instanceof Player) {
+			Player p = (Player) sender;
+			int z = p.getLocation().getBlockZ();
+			if (z < -52000 && p.isOp() == false) {
+				return true;
+			}
+			String geld = "RaidCoins";
+			if (args.length == 2) {
+				try {
+					Player t = Bukkit.getPlayer(args[0]);
+					try {
+						if (t.isOnline() == false) {
+							p.sendMessage("§cSpieler wurde nicht gefunden!");
+							return true;
+						}
+						if (t.getUniqueId() == p.getUniqueId()) {
+							p.sendMessage("§cDu kannst dir selbst kein Geld geben ;)!");
+							return true;
+						}
+						int betrag = Integer.parseInt(args[1]);
+
+						int geld1;
+						if (!VerwalteMoney.isMoney(p.getUniqueId().toString())) {
+							geld1 = VerwalteMoney.leseAus(p.getUniqueId());
+							VerwalteMoney.setMoney(p.getUniqueId().toString(), geld1);
+						} else {
+							geld1 = VerwalteMoney.getMoney(p.getUniqueId().toString());
+						}
+						
+						if (geld1 >= betrag && betrag>0) {
+							
+							int geld2;
+							if (!VerwalteMoney.isMoney(t.getUniqueId().toString())) {
+								geld2 = VerwalteMoney.leseAus(t.getUniqueId());
+								VerwalteMoney.setMoney(t.getUniqueId().toString(), geld2);
+							} else {
+								geld2 = VerwalteMoney.getMoney(t.getUniqueId().toString());
+							}
+							geld1 = geld1-betrag;
+							geld2 = geld2+betrag;
+							VerwalteMoney.setMoney(p.getUniqueId().toString(), geld1);
+							VerwalteMoney.setMoney(t.getUniqueId().toString(), geld2);
+							p.sendMessage("Du hast " + t.getName()  +" §c"+ betrag +"§r "+geld+ " gegeben!");
+							t.sendMessage("Du hast §2" + betrag+" §r"+geld  +" von "+ p.getName() + " bekommen!");
+						}
+						else {
+							p.sendMessage("§cDu hast nicht soviel Geld");
+						}
+					} catch (NumberFormatException ex) {
+						p.sendMessage("§c/pay <name> <Betrag>");
+					}
+				} catch (NullPointerException e) {
+					p.sendMessage("§cSpieler wurde nicht gefunden!");
+				}
+			} 
+			else {
+				p.sendMessage("§c/pay <name> <Betrag>");
+			}
+		}
+		
+		return true;
+	}
+
+}

@@ -1,0 +1,77 @@
+package commands;
+
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import mysql.MySQLWochenQuest;
+
+public class CommandWochenQuest implements CommandExecutor{
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (sender instanceof Player) {
+			Player p = (Player) sender;
+			if (args.length == 0) {
+				String aufgabe = MySQLWochenQuest.getAufgabe("AKTUELL");
+				String highest = MySQLWochenQuest.getHighestAbgaben();
+				int abgabe = 0;
+				if (MySQLWochenQuest.isUserExists(p.getUniqueId().toString())) {
+					abgabe = MySQLWochenQuest.getAbgaben(p.getUniqueId().toString());
+				}
+				p.sendMessage("§6[WQ] §2Aktuelle Aufgabe: §aSammle §6 "+aufgabe );
+				p.sendMessage("§6[WQ] §2Höchste Abgabe: §a"+highest);
+				p.sendMessage("§6[WQ] §2Deine Abgabe: §6"+abgabe);
+			} else if (args.length == 1) {
+				try {
+					int anzahl = Integer.valueOf(args[0]);
+					if (anzahl < 1) {
+						p.sendMessage("§6[Number Error] §c/wq <Anzahl>");
+						return true;
+					}
+					String aufgabe = MySQLWochenQuest.getAufgabe("AKTUELL");
+					ItemStack item = null ;
+					switch (aufgabe) {
+					case "Steine": item = new ItemStack(Material.COBBLESTONE,anzahl);
+						break;
+					case "Pflasterstein": item = new ItemStack(Material.COBBLESTONE,anzahl);
+						break;
+					case "Erde": item = new ItemStack(Material.DIRT,anzahl);
+						break;
+					case "Redstone": item = new ItemStack(Material.REDSTONE,anzahl);
+						break;
+					case "Sand": item = new ItemStack(Material.SAND,anzahl);
+						break;
+					case "Wolle": item = new ItemStack(Material.WOOL,anzahl);
+						break;
+					case "Diamanten": item = new ItemStack(Material.DIAMOND,anzahl);
+						break;
+					}
+					
+					if (p.getInventory().containsAtLeast(item, anzahl)) {
+						p.getInventory().removeItem(item);
+						p.updateInventory();
+						if (MySQLWochenQuest.isUserExists(p.getUniqueId().toString())) {
+							int abgaben = MySQLWochenQuest.getAbgaben(p.getUniqueId().toString());
+							abgaben += anzahl;
+							MySQLWochenQuest.updateAbgaben(p.getUniqueId().toString(), p.getName(), abgaben);
+						} else {
+							MySQLWochenQuest.updateRegister(p.getUniqueId().toString(), p.getName(), anzahl);
+						}
+						p.sendMessage("§6[WQ] §aDu hast erfolgreich §6"+anzahl+" "+aufgabe+" §aabgegeben!");
+					} else {
+						p.sendMessage("§6[WQ] §cDu hast nicht genügend Items davon");
+					}
+				} catch (NumberFormatException ex) {
+					p.sendMessage("§6[Number Error] §c/wq <Anzahl>");
+				}
+			} else {
+				p.sendMessage("§6[Usage Error] §c/wq \"<Anzahl>\"");
+			}
+		}
+		return true;
+	}
+}

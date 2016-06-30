@@ -1,0 +1,73 @@
+name: RaidSystem
+version: 1.9
+
+main: main.RaidSystem.Haupt
+
+commands:
+  inventar:
+    description: Show a Inventar
+  hebel:
+    description: Show a Inventar
+  getfraktion:
+    description: Get Fraction Lists
+  setfraktion:
+    description: set a Player a Fraction
+  item:
+    description: Item Change Command
+  cheat:
+    description: Helpfull Admin Command
+  raidreload:
+    description: Reload Raid Plugin
+    aliases: [rarl]
+  sign:
+    description: Change Sign Text
+  beruf:
+    description: See the jobs
+    aliases: [berufe,job,jobs]
+  berufinfo:
+    description: See your job
+    aliases: [be,beinfo]
+  berufboni:
+    description: See your job boni
+    aliases: [beboni,boni]
+  getberuf:
+    description: See the job of a Player
+    aliases: [getberufe,getjob,getjobs]
+  setberuf:
+    description: Set the job of a Player
+    aliases: [setberufe,setjob,setjobs]
+  spitzhacke:
+    description: Miner Beruf Boni Lv1
+  veredeln:
+    description: Miner Beruf Boni Lv3
+  gerben:
+    description: Pelzner Beruf Boni Lv3
+  verhaerten:
+    description: Schmied Beruf Boni
+    aliases: [verh]
+  zerlegen:
+    description: Schmied Beruf Boni Lv4
+  haerten:
+    description: Schmied Beruf Boni Lv5
+  schleifen:
+    description: Juwelier Beruf Boni
+  character:
+    description: Charakter Inventar
+  wochenquest:
+    description: Wochenquest Overview
+    aliases: [abgeben,wq]
+  money:
+    description: Money Overview
+  moneytop:
+    description: Top Money Player Overview
+    aliases: [topmoney]
+  punkte:
+    description: Punkte Overview
+    aliases: [points]
+  taler:
+    description: Taler Overview
+  pay:
+    description: Pay an other Player Money
+  fraktion:
+    description: Fraktion Overview
+    aliases: [fraction]

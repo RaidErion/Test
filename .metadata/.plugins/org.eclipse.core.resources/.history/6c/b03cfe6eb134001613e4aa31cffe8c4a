@@ -1,0 +1,47 @@
+package listener;
+
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+
+import fraktionbereich.CheckMethoden;
+import fraktionbereich.CheckeNeulingMove;
+import mysql.VerwalteFraktion;
+
+public class ListenerMove implements Listener{
+
+	@EventHandler
+	public void onMove(PlayerMoveEvent e) {
+		Player p = e.getPlayer();
+		if (p.getGameMode() == GameMode.SPECTATOR) {
+			if (CheckeNeulingMove.checkeMove(p) == false) {
+				p.sendMessage("§6[Fraktion] §cDu hast den Fraktionsbereich verlassen!");
+				p.sendMessage("§6[Fraktion] §cDu wurdest wieder in die Mitte tpt!");
+				e.setTo(new Location(p.getWorld(), 0, 85, 0));
+			}
+			return;
+		}
+		if (!p.isOp()) {
+			CheckMethoden checkMethoden = new CheckMethoden();
+			byte check = checkMethoden.checkPlayerInSpawn(e.getTo());
+			if (check != 0) {
+				String fraktion = VerwalteFraktion.get(p.getUniqueId());
+				if (check == 2 && !fraktion.equalsIgnoreCase("Sonnenkrieger")) {
+					p.teleport(e.getFrom());
+					int leben = (int) p.getHealth();
+					if (leben >= 2) {
+						p.setHealth(p.getHealth()-2);
+					} else if (leben == 0){
+						return;
+					} else {
+						p.setHealth(0);
+					}
+					p.sendMessage("§6[Fraktion] §cDu bist kein §eSonnenkrieger!");
+				}
+			}
+		}
+	}
+}

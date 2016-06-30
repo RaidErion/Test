@@ -1,0 +1,35 @@
+package tasks;
+
+import mysql.MySQLWochenQuest;
+
+public class WochenQuest {
+
+	public void setWochenQuest() {
+		MySQLWochenQuest mySQLWochenQuest = new MySQLWochenQuest();
+		String aktuell = mySQLWochenQuest.getAufgabe("AKTUELL");
+		String newAufgabe = null;
+		for (int i = 0; i < 15; i++) {
+			int random = (int) (Math.random()*7);
+			switch (random) {
+			case 0: newAufgabe = "Pflastersteine";
+				break;
+			case 1: newAufgabe = "Erde";
+				break;
+			case 2: newAufgabe = "Redstone";
+				break;
+			case 3: newAufgabe = "Sand";
+				break;
+			case 4: newAufgabe = "Wolle";
+				break;
+			case 5: newAufgabe = "Diamanten";
+				break;
+			case 6: newAufgabe = "Steine";
+				break;
+			}
+			if (!newAufgabe.equals(aktuell)) {
+				break;
+			}
+		}
+		
+	}
+}

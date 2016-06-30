@@ -1,0 +1,72 @@
+package economy;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class CommandTaler implements CommandExecutor{
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		String geld = "RaidTaler";
+		if (sender instanceof Player) {
+			Player p = (Player) sender;
+			if (args.length == 0) {
+				int taler = VerwalteEconomy.getTaler(p);
+				p.sendMessage("§6[Taler] §rDu hast §6" + taler + "§r " + geld);
+			} else if (args.length == 1) {
+				if (!p.isOp()) {
+					p.sendMessage("§6[Usage Error] §c/taler");
+					return true;
+				}
+				OfflinePlayer t = Bukkit.getOfflinePlayer(args[0]);
+				if (!t.hasPlayedBefore() && !t.isOnline()) {
+					p.sendMessage("§6[NotFound Error] §cDieser Spieler wurde nicht gefunden!");
+					return true;
+				}
+				int money = VerwalteEconomy.getTaler(t);
+				p.sendMessage("§6[Taler] " + t.getName() + " §rhat §6" + money + "§r " + geld);
+			} else if (args.length == 3) {
+				if (!p.isOp()) {
+					p.sendMessage("§6[Usage Error] §c/taler");
+					return true;
+				}
+			} else {
+				p.sendMessage("§6[Usage Error] §c/taler");
+			}
+		}
+		if (args.length == 3) {
+			if (!args[1].equalsIgnoreCase("add")) {
+				sender.sendMessage("§6[Usage Error] §c/taler <Spieler> add <wert>");
+				return true;
+			}
+			OfflinePlayer t = Bukkit.getOfflinePlayer(args[0]);
+			if (!t.hasPlayedBefore() && !t.isOnline()) {
+				sender.sendMessage("§6[NotFound Error] §cDieser Spieler wurde nicht gefunden!");
+				return true;
+			}
+			try {
+				int add = Integer.valueOf(args[2]);
+				int taler = VerwalteEconomy.getTaler(t);
+				taler = taler + add;
+				VerwalteEconomy.setTaler(t, taler);
+				sender.sendMessage("§6[Taler] " + t.getName() + "§r hat nun §6" + taler + " §r" + geld);
+				if (t.isOnline()) {
+					Player ta = Bukkit.getPlayer(args[0]);
+					ta.sendMessage("§6[Taler] §rDu hast §6" + add + " §r" + geld + " erhalten");
+					ta.sendMessage("§6[Taler] §rDu hast nun §6" + taler + " §r" + geld);
+				}
+			} catch (NumberFormatException ex) {
+				sender.sendMessage("§6[Number Error] §c/taler <Spieler> add <wert>");
+			}
+		} else {
+			sender.sendMessage("§6[Usage Error] §c/taler <Spieler> add <wert>");
+		}
+		return true;
+	}
+
+}

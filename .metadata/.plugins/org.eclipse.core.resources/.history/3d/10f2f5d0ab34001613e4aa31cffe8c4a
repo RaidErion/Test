@@ -1,0 +1,30 @@
+package fraktionbereich;
+
+import org.bukkit.Location;
+
+public class CheckMethoden {
+
+	public byte checkPlayerInSpawn(Location loc) {
+		int x = loc.getBlockX();
+		int z = loc.getBlockZ();
+		
+		/*	
+		 * 1 = Spawnbereich 	Allgemein
+		 * 2 = Sonnenkriegern 	Bereich
+		 * 3 = Tempelritter 	Bereich
+		 * 4 = Mob Farm			Bereich
+		*/
+		
+		// Spawnbereich
+		if ( x < 259 && x > -249 && y < 94 && y > -94) {
+			
+		}
+		// Mob Farm Bereich
+		else if ( x < 2000 && x > 2000 && z < 2000 && z > -2000) {
+			
+		}
+		
+			
+		return 0;
+	}
+}

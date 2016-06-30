@@ -1,0 +1,34 @@
+package commands;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import mysql.MySQLWochenQuest;
+
+public class CommandWochenQuest implements CommandExecutor{
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (sender instanceof Player) {
+			Player p = (Player) sender;
+			if (args.length == 0) {
+				String aufgabe = MySQLWochenQuest.getAufgabe("AKTUELL");
+				String highest = MySQLWochenQuest.getHighestAbgaben();
+				int abgabe = 0;
+				if (MySQLWochenQuest.isUserExists(p.getUniqueId().toString())) {
+					abgabe = MySQLWochenQuest.getAbgaben(p.getUniqueId().toString());
+				}
+				p.sendMessage("§6[WQ] §2Aktuelle Aufgabe: §aSammle §6 "+aufgabe );
+				p.sendMessage("§6[WQ] §2Höchste Abgabe: §a"+highest);
+				p.sendMessage("§6[WQ] §2Deine Abgabe: §6"+abgabe);
+			} else if (args.length == 1) {
+				
+			} else {
+				p.sendMessage("§6[Usage Error] §c/wq \"<Anzahl>\"");
+			}
+		}
+		return true;
+	}
+}

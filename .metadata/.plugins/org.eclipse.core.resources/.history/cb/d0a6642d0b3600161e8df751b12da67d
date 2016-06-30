@@ -1,0 +1,102 @@
+package mysql;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class MySQLWochenQuest {
+
+	public boolean isUserExists(String uuid) {
+		try {
+			PreparedStatement ps = MySQL.getCon().prepareStatement("SELECT Spielername FROM WochenQuest WHERE UUID = ?");
+			ps.setString(1, uuid);
+			ResultSet rs = ps.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void updateAbgaben(String uuid, String name, int value) {
+		try {
+			PreparedStatement ps = MySQL.getCon().prepareStatement("UPDATE WochenQuest SET Abgaben = ?, Spielername = ? WHERE UUID = ?");
+			ps.setInt(1, value);
+			ps.setString(2, name);
+			ps.setString(3, uuid);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateRegister(String uuid, String name, int value) {
+		try {
+			PreparedStatement ps = MySQL.getCon().prepareStatement("INSERT INTO WochenQuest (UUID,Spielername,Abgaben) VALUES (?,?,?)");
+			ps.setString(1, uuid);
+			ps.setString(2, name);
+			ps.setInt(3, value);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Integer getAbgaben(String uuid) {
+		try {
+			PreparedStatement ps = MySQL.getCon().prepareStatement("SELECT Abgaben FROM WochenQuest WHERE UUID = ?");
+			ps.setString(1, uuid);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				return rs.getInt("Abgaben");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	public String getAufgabe(String uuid) {
+		try {
+			PreparedStatement ps = MySQL.getCon().prepareStatement("SELECT Spielername FROM WochenQuest WHERE UUID = ?");
+			ps.setString(1, uuid);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				return rs.getString("Spielername");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getHighestAbgaben() {
+		try {
+			String abgaben = null;
+			PreparedStatement ps = MySQL.getCon().prepareStatement("SELECT Spielername, Abgaben FROM WochenQuest ORDER BY WochenQuest.Abgaben DESC LIMIT 1");
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				abgaben = rs.getString("Spielername") + ":§6 " + rs.getInt("Abgaben");
+			}
+			return abgaben;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void resetAbgaben() {
+		try {
+			PreparedStatement ps = MySQL.getCon().prepareStatement("UPDATE WochenQuest SET Abgaben = 0 WHERE 1");
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}

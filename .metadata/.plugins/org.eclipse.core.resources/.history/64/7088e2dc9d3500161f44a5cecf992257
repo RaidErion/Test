@@ -1,0 +1,11 @@
+package auslagerungen;
+
+import org.bukkit.Material;
+
+public class CheckeWQ {
+
+	public Material checke(String string) {
+		
+		return null;
+	}
+}

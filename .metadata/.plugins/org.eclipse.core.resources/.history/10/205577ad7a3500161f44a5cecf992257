@@ -1,0 +1,184 @@
+package economy;
+
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+public class MoneyShop {
+
+	public void readSign(Player p, Sign sign) {
+		String[] lines = sign.getLines();
+		if (lines[0].equalsIgnoreCase("Kaufen")) {
+			kaufe(p, sign);
+		} else if (lines[0].equalsIgnoreCase("Verkaufen")) {
+			verkaufe(p, sign);
+		}
+	}
+	
+	private void kaufe(Player p, Sign sign) {
+		String[] lines = sign.getLines();
+		if (lines[0].equalsIgnoreCase("Kaufen")) {
+			int anzahl = 1;
+			if (p.isSneaking()) {
+				anzahl = 64;
+			}
+			Material mat = null;
+			String product = lines[1];
+			switch (product) {
+				case "Bedrock": mat = Material.BEDROCK;
+			        break;
+			    case "Exp Bottle": mat = Material.EXP_BOTTLE;
+			        break;
+			    case "Glasflasche": mat = Material.GLASS_BOTTLE;
+			        break;
+			    case "Braustand": mat = Material.BREWING_STAND_ITEM;
+			        break;
+			    case "Kessel": mat = Material.CAULDRON_ITEM;
+			        break;
+			    case "Eisenbarren": mat = Material.IRON_INGOT;
+			        break;
+			    case "Goldbarren": mat = Material.GOLD_INGOT;
+			        break;
+			    case "Smaragd": mat = Material.EMERALD;
+			        break;
+			    case "Diamant": mat = Material.DIAMOND;
+			        break;
+			    case "Leder": mat = Material.LEATHER;
+			        break;
+			    case "Apfel": mat = Material.APPLE;
+			        break;
+			    case "Goldener Apfel": mat = Material.GOLDEN_APPLE;
+			        break;
+			    case "Steak": mat = Material.COOKED_BEEF;
+			        break;
+			    case "Eichensetzling": mat = Material.SAPLING;
+			        break;
+			    case "Eimer": mat = Material.BUCKET;
+			        break;
+			    case "Wassereimer": mat = Material.WATER_BUCKET;
+			        break;
+			    case "Lavaeimer": mat = Material.LAVA_BUCKET;
+			        break;
+			    case "Endertruhe": mat = Material.ENDER_CHEST;
+			        break;
+			    case "Amboss": mat = Material.ANVIL;
+			        break;
+			    case "Sattel": mat = Material.SADDLE;
+			        break;
+			    case "TNT": mat = Material.TNT;
+			        break;
+			    case "Sand": mat = Material.SAND;
+			        break;
+			    case "Wolle": mat = Material.WOOL;
+			        break;
+			    case "Buch": mat = Material.BOOK;
+			        break;
+			    case "Bücherregal": mat = Material.BOOKSHELF;
+			        break;
+			    case "Obsidian": mat = Material.OBSIDIAN;
+			        break;
+			    case "Zaubertisch": mat = Material.ENCHANTMENT_TABLE;
+			        break;
+			    case "Eichenholz": mat = Material.LOG;
+			        break;
+			    default: 
+					break;    
+			}
+			ItemStack item = new ItemStack(mat,anzahl);
+			if (p.getInventory().firstEmpty() == -1) {
+				p.sendMessage("§6[Shop] §cDein Inventar ist aktuell voll!");
+				return;
+			}
+			try {
+				String linePreis = lines[3].replace(" RaidCoins", "");
+				int preis = Integer.valueOf(linePreis);
+				preis = preis * anzahl;
+				int money = VerwalteEconomy.getMoney(p);
+				if (money < preis) {
+					p.sendMessage("§6[Shop] §cDu hast nicht genug Geld dafür!");
+					return;
+				}
+				money = money-preis;
+				VerwalteEconomy.setMoney(p, money);
+				p.getInventory().addItem(item);
+				p.updateInventory();
+				p.sendMessage("§6[Shop] §2Erfolgreich §r" + anzahl + " " + product + " für §6"+ preis + "§r RaidCoins §cgekauft");
+			} catch (NumberFormatException ex) {
+				p.sendMessage("§6[Critical Error] §cEs trat ein Fehler auf! Wende dich bitte an ein Team Mitglied!");
+			}
+		}
+	}
+	
+	
+	private void verkaufe(Player p, Sign sign) {
+		if (p.getInventory().getItemInMainHand() != null) {
+			if (p.getInventory().firstEmpty() != -1) {
+				ItemStack item = p.getInventory().getItemInMainHand();
+				p.getInventory().setItemInMainHand(null);
+				p.getInventory().addItem(item);
+			} else {
+				p.sendMessage("§6[Shop] §cDu darfst kein Item in der Hand halten!");
+				return;
+			}
+		}
+		
+		String[] lines = sign.getLines();
+		byte anzahl = 1;
+		byte multiplicator = 1;
+		if (p.isSneaking()) {
+			multiplicator = 64;
+		}
+		Material mat = null;
+		short durability = 0;
+		String product = lines[1];
+		switch (product) {
+			case "Pflasterstein": mat = Material.COBBLESTONE; anzahl = 64; multiplicator = 1;
+				break;
+			case "Netherstein": mat = Material.NETHERRACK; anzahl = 64; multiplicator = 1;
+				break;
+			case "Weiße Wolle": mat = Material.WOOL; anzahl = 64; multiplicator = 1;
+				break;
+			case "Lapislazuli": mat = Material.INK_SACK; anzahl = 64; durability = 4; multiplicator = 1;
+				break;
+			case "Eisenbarren": mat = Material.IRON_INGOT;
+				break;
+			case "Goldbarren": mat = Material.GOLD_INGOT;
+				break;
+			case "Diamant": mat = Material.DIAMOND;
+				break;
+			case "Smaragd": mat = Material.EMERALD;
+				break;
+			case "Kohle": mat = Material.COAL; anzahl = 16; multiplicator = 1;
+				break;
+			case "Redstone": mat = Material.REDSTONE;
+				break;
+			case "Melone": mat = Material.MELON_BLOCK;
+				break;
+			case "Kürbis": mat = Material.PUMPKIN;
+				break;
+			default: 
+				break;
+		}
+		
+		ItemStack item = new ItemStack(mat,anzahl,durability);
+		if (p.getInventory().containsAtLeast(item, anzahl)) {
+			try {
+				String linePreis = lines[3].replace(" RaidCoins", "");
+				int preis = Integer.valueOf(linePreis);
+				preis = preis * multiplicator;
+				
+				p.getInventory().removeItem(item);
+				p.updateInventory();
+				int money = VerwalteEconomy.getMoney(p);
+				money = money+preis;
+				VerwalteEconomy.setMoney(p, money);
+				p.sendMessage("§6[Shop] §2Erfolgreich §r" + anzahl + " " + product + " für §6"+ preis + "§r RaidCoins §2verkauft");
+			} catch (NumberFormatException ex) {
+				p.sendMessage("§6[Critical Error] §cEs trat ein Fehler auf! Wende dich bitte an ein Team Mitglied!");
+			}
+		} else {
+			p.sendMessage("§6[Shop] §cDu hast nicht genug Materialien davon!");
+		}
+	}
+}
